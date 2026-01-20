@@ -14,7 +14,7 @@ function sizeString(size: number) {
     if (finalSize < 1024) {
       break;
     }
-    finalSize /= 1024;
+    finalSize >>= 10;
   }
   return `${finalSize.toFixed(prefix === "" ? 0 : 1)} ${prefix}B`;
 }
