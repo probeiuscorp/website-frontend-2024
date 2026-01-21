@@ -1,4 +1,9 @@
-import { getServerSidePropsWithAuthDefaults } from "@/authUtils.ts";
+import {
+  AuthLevel,
+  canControlStream,
+  getAuthLevel,
+  getServerSidePropsWithAuthDefaults,
+} from "@/authUtils.ts";
 import EventOverview from "@/components/event-overview.tsx";
 import Head from "next/head";
 import Link from "next/link";
@@ -193,10 +198,7 @@ export default function StreamPage() {
               ) : (
                 ""
               )}
-              {session?.roles === undefined ||
-              session.roles.findIndex((s) => s === "streamer") === -1 ? (
-                ""
-              ) : (
+              {canControlStream(session, stream) ? (
                 <>
                   <h2>Stream Key</h2>
                   <p>
@@ -212,11 +214,10 @@ export default function StreamPage() {
                     {streamKeyCopyMessage}
                   </p>
                 </>
-              )}
-              {session?.roles === undefined ||
-              session.roles.findIndex((s) => s === "leadership") === -1 ? (
-                ""
               ) : (
+                ""
+              )}
+              {getAuthLevel(session) >= AuthLevel.ADMIN ? (
                 <>
                   <h2>Edit Details</h2>
                   <StreamForm
@@ -237,6 +238,8 @@ export default function StreamPage() {
                     </button>
                   </p>
                 </>
+              ) : (
+                ""
               )}
             </>
           );

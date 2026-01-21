@@ -1,6 +1,7 @@
 import { compile, format } from "date-and-time";
 import Link from "next/link";
 import { useContext } from "react";
+import { AuthLevel, getAuthLevel } from "@/authUtils.ts";
 import { AuthContext } from "./auth-context.tsx";
 import StreamOneline from "./stream-oneline.tsx";
 
@@ -74,13 +75,12 @@ export default function EventOverview({ event, basic }: Props) {
               );
             })()}
           </li>
-          {session?.roles === undefined ||
-          session.roles.findIndex((s) => s === "streamer") === -1 ? (
-            ""
-          ) : (
+          {getAuthLevel(session) >= AuthLevel.ADMIN ? (
             <li>
               <Link href={`event/${event.id}/add-stream`}>Add Stream</Link>
             </li>
+          ) : (
+            ""
           )}
         </>
       )}
