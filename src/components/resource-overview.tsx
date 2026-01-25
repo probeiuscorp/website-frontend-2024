@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "@/components/auth-context.tsx";
+import { canControlStream } from "@/authUtils.ts";
 
 type Props = {
   resource: ServerResource;
+  stream?: ServerStreamIn;
 };
 
 const PREFIXES = ["", "k", "M", "G"];
@@ -19,7 +22,7 @@ function sizeString(size: number) {
   return `${finalSize.toFixed(prefix === "" ? 0 : 1)} ${prefix}B`;
 }
 
-export function ResourceOverview({ resource }: Props) {
+export function ResourceOverview({ resource, stream }: Props) {
   const [deleted, setDeleted] = useState(false);
   async function deleteResource() {
     let url;
@@ -36,6 +39,8 @@ export function ResourceOverview({ resource }: Props) {
       setDeleted(true);
     }
   }
+
+  const { session } = useContext(AuthContext);
 
   return (
     <>
@@ -55,9 +60,17 @@ export function ResourceOverview({ resource }: Props) {
         sha256:
         {resource.content_hash.substring(0, 12)}
       </abbr>{" "}
-      <button type="button" onClick={deleteResource} disabled={deleted}>
-        Delete
-      </button>
+      {stream !== undefined && canControlStream(session, stream) ? (
+        <button type="button" onClick={deleteResource} disabled={deleted}>
+          Delete
+        </button>
+      ) : (
+        ""
+      )}
     </>
   );
 }
+
+ResourceOverview.defaultProps = {
+  stream: undefined,
+};
