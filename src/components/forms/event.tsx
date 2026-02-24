@@ -1,9 +1,10 @@
 import * as dat from "date-and-time";
 
-import { permissiveDateToInputString } from "@/timeUtils.ts";
+import {
+  HTML_INPUT_DATE_FORMAT,
+  permissiveDateToInputString,
+} from "@/timeUtils.ts";
 import { FormEvent, MouseEvent, useState } from "react";
-
-const INFORMAT = dat.compile("YYYY-MM-DD[T]HH:mm");
 
 type Props = {
   event: ServerEventIn | null;
@@ -34,14 +35,16 @@ export default function EventForm({ event, callback }: Props) {
     };
 
     const st =
-      dat.parse(fd.get("start")!.toString(), INFORMAT).getTime() / 1000;
+      dat.parse(fd.get("start")!.toString(), HTML_INPUT_DATE_FORMAT).getTime() /
+      1000;
     if (!Number.isNaN(st)) {
       payload.start_time = st;
     }
 
     if (fd.get("end") !== "") {
       const et =
-        dat.parse(fd.get("end")!.toString(), INFORMAT).getTime() / 1000;
+        dat.parse(fd.get("end")!.toString(), HTML_INPUT_DATE_FORMAT).getTime() /
+        1000;
       if (!Number.isNaN(st)) {
         payload.end_time = et;
       }
