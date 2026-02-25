@@ -1,7 +1,10 @@
+import * as dat from "date-and-time";
+
+export const HTML_INPUT_DATE_FORMAT = dat.compile("YYYY-MM-DD[T]HH:mm");
+
 export function permissiveDateToInputString(d: string | number): string {
   if (typeof d === "string") {
     return d;
   }
-  const iso = new Date(d * 1000).toISOString();
-  return iso.substring(0, iso.lastIndexOf(":"));
+  return dat.format(new Date(d * 1000), HTML_INPUT_DATE_FORMAT);
 }
