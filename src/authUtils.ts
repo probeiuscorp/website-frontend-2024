@@ -147,3 +147,33 @@ export function getServerSidePropsWithAuthDefaults<
     return result;
   };
 }
+
+export enum AuthLevel {
+  UNAUTHENTICATED = 0,
+  USER = 1,
+  STREAMER = 5,
+  ADMIN = 10,
+}
+
+export function getAuthLevel(session: AuthSession | null): AuthLevel {
+  if (session?.roles === undefined) {
+    return AuthLevel.UNAUTHENTICATED;
+  }
+  if (session.roles.includes("leadership")) {
+    return AuthLevel.ADMIN;
+  }
+  if (session.roles.includes("streamer")) {
+    return AuthLevel.STREAMER;
+  }
+  return AuthLevel.USER;
+}
+
+export function canControlStream(
+  session: AuthSession | null,
+  stream: ServerStreamIn,
+): boolean {
+  return (
+    getAuthLevel(session) >= AuthLevel.STREAMER &&
+    stream.presenter === session?.uuid
+  );
+}

@@ -1,6 +1,10 @@
 import Head from "next/head";
 
-import { getServerSidePropsWithAuthDefaults } from "@/authUtils.ts";
+import {
+  AuthLevel,
+  getAuthLevel,
+  getServerSidePropsWithAuthDefaults,
+} from "@/authUtils.ts";
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import EventOverview from "@/components/event-overview.tsx";
@@ -104,15 +108,14 @@ export default function EventPage() {
                   </a>
                 </strong>
               </p>
-              {session?.roles === undefined ||
-              session.roles.findIndex((s) => s === "streamer") === -1 ? (
-                ""
-              ) : (
+              {getAuthLevel(session) >= AuthLevel.ADMIN ? (
                 <p>
                   <Link href={`/event/${router.query.uuid}/add-stream`}>
                     <strong>Add Stream to Event</strong>
                   </Link>
                 </p>
+              ) : (
+                ""
               )}
               {event.resources && event.resources.length > 0 ? (
                 <>
@@ -143,10 +146,7 @@ export default function EventPage() {
                   </>
                 );
               })}
-              {session?.roles === undefined ||
-              session.roles.findIndex((s) => s === "leadership") === -1 ? (
-                ""
-              ) : (
+              {getAuthLevel(session) >= AuthLevel.ADMIN ? (
                 <>
                   <h2>Edit Details</h2>
                   <EventForm event={event} callback={formCallback} />
@@ -163,6 +163,8 @@ export default function EventPage() {
                     </button>
                   </p>
                 </>
+              ) : (
+                ""
               )}
             </>
           );

@@ -1,6 +1,10 @@
 import Head from "next/head";
 
-import { getServerSidePropsWithAuthDefaults } from "@/authUtils.ts";
+import {
+  AuthLevel,
+  getAuthLevel,
+  getServerSidePropsWithAuthDefaults,
+} from "@/authUtils.ts";
 import Calendar from "react-calendar";
 import { useContext, useEffect, useState } from "react";
 import EventOverview from "@/components/event-overview.tsx";
@@ -84,15 +88,14 @@ export default function CalendarPage() {
             }
           }}
         />
-        {session?.roles === undefined ||
-        session.roles.findIndex((s) => s === "leadership") === -1 ? (
-          ""
-        ) : (
+        {getAuthLevel(session) >= AuthLevel.ADMIN ? (
           <p>
             <strong>
               <Link href="/event/new">Create New Event</Link>
             </strong>
           </p>
+        ) : (
+          ""
         )}
         <h2>Selected Events</h2>
         {selectedEvents.length === 0 ? (
