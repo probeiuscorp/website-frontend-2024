@@ -99,8 +99,11 @@ export default function Home() {
         </p>
         <h2>EndOf10</h2>
         <p>
-          Did you know? Microsoft is ending support for Windows 10 on{" "}
-          <strong>October 14</strong>. The FSLC is partnered with{" "}
+          Did you know? Microsoft ended support for Windows 10 on{" "}
+          <strong>October 14, 2025</strong>, at least, that was their plan.
+          Microsoft decided to offer extended security updates for a little bit
+          longer at the low (as in sneaky and suspicious) price of your personal
+          data. The FSLC is partnered with{" "}
           <a href="https://endof10.org/">EndOf10</a> to provide help to those
           who want to <strong>switch to Linux</strong> instead of buying a new
           computer. Get in contact with us to learn more!
