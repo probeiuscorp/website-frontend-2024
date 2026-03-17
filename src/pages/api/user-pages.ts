@@ -15,7 +15,7 @@ export default async function handler(
 ) {
   const files = await shallowCloneRef("refs/heads/main", {
     makeRequest: fetchRepository(
-      "https://github.com/probeiuscorp/fslc-user-pages.git",
+      "https://github.com/USUFSLC/fslc-user-pages.git",
     ),
     filter: (filepath) => filepath.startsWith("people/"),
   });

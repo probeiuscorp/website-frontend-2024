@@ -21,7 +21,7 @@ export default function UserPages() {
     };
   }, []);
 
-  const prLink = "https://github.com/probeiuscorp/fslc-user-pages";
+  const prLink = "https://github.com/USUFSLC/fslc-user-pages";
   const hasUserPages = userPages !== noUsersYet;
 
   return (
