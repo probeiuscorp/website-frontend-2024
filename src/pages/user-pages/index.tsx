@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Markdown from "react-markdown";
+import { ResponseData } from "../api/user-pages.ts";
 
+type UserPage = ResponseData["users"][number];
+const noUsersYet: UserPage[] = [];
 export default function UserPages() {
-  const [userPages, setUserPages] = useState([]);
+  const [userPages, setUserPages] = useState(noUsersYet);
   useEffect(() => {
     let canceled = false;
     fetch("/api/user-pages")
@@ -18,20 +21,34 @@ export default function UserPages() {
     };
   }, []);
 
+  const prLink = "https://github.com/probeiuscorp/fslc-user-pages";
+  const hasUserPages = userPages !== noUsersYet;
+
   return (
     <>
       <Head>
         <title>User pages | USU FSLC</title>
       </Head>
-      <main style={{ marginTop: "2rem" }}>
-        {userPages.map(({ name, content }) => (
-          <div key={name}>
-            <details>
-              <summary>{name}</summary>
-              <Markdown>{content}</Markdown>
-            </details>
+      <main style={{ padding: "0 1.5rem" }}>
+        <div>
+          <h2>User pages</h2>
+          Have strong opinions about some obscure or not-so obscure tool? Share
+          them here! Make a pull request against
+          <div style={{ margin: "1em 40px" }}>
+            <a href={prLink}>{prLink}</a>
           </div>
-        ))}
+        </div>
+        <div style={{ marginTop: "2rem", width: "100%" }}>
+          {!hasUserPages && <div>loading...</div>}
+          {userPages.map(({ name, content }) => (
+            <div key={name}>
+              <details>
+                <summary>{name}</summary>
+                <Markdown>{content}</Markdown>
+              </details>
+            </div>
+          ))}
+        </div>
       </main>
     </>
   );

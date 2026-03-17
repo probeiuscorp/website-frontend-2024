@@ -1,7 +1,7 @@
 import { shallowCloneRef, httpFetchUsing } from "git-clone-client";
 import { NextApiRequest, NextApiResponse } from "next";
 
-type ResponseData = {
+export type ResponseData = {
   users: ReadonlyArray<{
     name: string;
     content: string;
