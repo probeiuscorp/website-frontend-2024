@@ -17,6 +17,19 @@ export const getServerSideProps = getServerSidePropsWithAuthDefaults(
   },
 );
 
+function classNameForTitle(dayEvents: ServerEventIn[]) {
+  const scores = dayEvents.map((event) => {
+    if (event.title.includes("Club") || event.title.includes("club")) return 1;
+    return 0;
+  });
+  const bestScore = Math.max(...scores);
+  return (
+    ["fslc-calendar__event_regular", "fslc-calendar__event_get-together"][
+      bestScore
+    ] ?? ""
+  );
+}
+
 export default function CalendarPage() {
   const [events, setEvents] = useState<Record<number, ServerEventIn[]>>({});
   const [selectedEvents, setSelectedEvents] = useState<ServerEventIn[]>([]);
@@ -86,6 +99,13 @@ export default function CalendarPage() {
                 );
               }
             }
+          }}
+          tileClassName={({ date }) => {
+            const daysEvents = events[date.getDate()];
+            if (daysEvents) {
+              return classNameForTitle(daysEvents);
+            }
+            return undefined;
           }}
         />
         {getAuthLevel(session) >= AuthLevel.ADMIN ? (

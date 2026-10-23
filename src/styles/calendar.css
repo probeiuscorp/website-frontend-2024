@@ -21,3 +21,12 @@
 	background-color: transparent;
 	color: var(--gruvbox-mode-fg-4);
 }
+
+.fslc-calendar__event_regular {
+	
+}
+
+.fslc-calendar__event_get-together {
+	background-color: #8a8a8a80;
+	color: var(--gruvbox-mode-fg-1);
+}
