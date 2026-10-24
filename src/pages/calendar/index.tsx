@@ -17,10 +17,36 @@ export const getServerSideProps = getServerSidePropsWithAuthDefaults(
   },
 );
 
+type FSLCEventType = {
+  name: string;
+  className: string;
+  doesEventMatch: (event: ServerEventIn) => boolean;
+};
+const fslcEventTypes: FSLCEventType[] = [
+  {
+    name: "Meetings",
+    className: "fslc-calendar__event_regular",
+    doesEventMatch: () => true,
+  },
+  {
+    name: "Get-togethers",
+    className: "fslc-calendar__event_get-together",
+    doesEventMatch: ({ title }) => {
+      return title.includes("Club") || title.includes("club");
+    },
+  },
+];
 function classNameForTitle(dayEvents: ServerEventIn[]) {
   const scores = dayEvents.map((event) => {
-    if (event.title.includes("Club") || event.title.includes("club")) return 1;
-    return 0;
+    const score = fslcEventTypes
+      .flatMap((eventType, i) => {
+        if (eventType.doesEventMatch(event)) {
+          return i;
+        }
+        return [];
+      })
+      .at(-1);
+    return score ?? 0;
   });
   const bestScore = Math.max(...scores);
   return (
@@ -67,6 +93,35 @@ export default function CalendarPage() {
 
   const { session } = useContext(AuthContext);
 
+  const calendar = (
+    <Calendar
+      showNeighboringMonth={false}
+      tileDisabled={(d) => {
+        if (d.view === "month") {
+          return !Object.hasOwn(events, d.date.getDate());
+        }
+        return false;
+      }}
+      onClickDay={(d) => setSelectedEvents(events[d.getDate()] ?? [])}
+      onActiveStartDateChange={(d) => {
+        if (d.view === "month") {
+          if (d.activeStartDate !== null) {
+            loadEvents(
+              d.activeStartDate.getFullYear(),
+              d.activeStartDate.getMonth(),
+            );
+          }
+        }
+      }}
+      tileClassName={({ date }) => {
+        const daysEvents = events[date.getDate()];
+        if (daysEvents) {
+          return classNameForTitle(daysEvents);
+        }
+        return undefined;
+      }}
+    />
+  );
   return (
     <>
       <Head>
@@ -81,33 +136,18 @@ export default function CalendarPage() {
             </Link>
           </strong>
         </p>
-        <Calendar
-          showNeighboringMonth={false}
-          tileDisabled={(d) => {
-            if (d.view === "month") {
-              return !Object.hasOwn(events, d.date.getDate());
-            }
-            return false;
-          }}
-          onClickDay={(d) => setSelectedEvents(events[d.getDate()] ?? [])}
-          onActiveStartDateChange={(d) => {
-            if (d.view === "month") {
-              if (d.activeStartDate !== null) {
-                loadEvents(
-                  d.activeStartDate.getFullYear(),
-                  d.activeStartDate.getMonth(),
-                );
-              }
-            }
-          }}
-          tileClassName={({ date }) => {
-            const daysEvents = events[date.getDate()];
-            if (daysEvents) {
-              return classNameForTitle(daysEvents);
-            }
-            return undefined;
-          }}
-        />
+        <div className="calendar-key__anchor">
+          <div className="calendar-key__box">
+            Key
+            {fslcEventTypes.map(({ name, className }) => (
+              <div className={`calendar-key__item ${className}`} key={name}>
+                <div>{name}</div>
+                <div className="calendar-key__item-explain">[?]</div>
+              </div>
+            ))}
+          </div>
+          {calendar}
+        </div>
         {getAuthLevel(session) >= AuthLevel.ADMIN ? (
           <p>
             <strong>

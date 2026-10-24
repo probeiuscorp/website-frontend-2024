@@ -23,10 +23,35 @@
 }
 
 .fslc-calendar__event_regular {
-	
+	background-color: var(--gruvbox-mode-bold-blue);
+	color: var(--gruvbox-mode-bg-0);
 }
 
 .fslc-calendar__event_get-together {
 	background-color: #8a8a8a80;
 	color: var(--gruvbox-mode-fg-1);
+}
+
+.calendar-key__anchor {
+	position: relative;
+	margin: 0 auto;
+	width: max-content;
+}
+
+.calendar-key__box {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	right: 0;
+	top: 0;
+	transform: translateX(100%);
+}
+
+.calendar-key__item {
+	display: flex;
+	justify-content: space-between;
+	gap: 4px;
+	padding: 8px 12px;
 }
